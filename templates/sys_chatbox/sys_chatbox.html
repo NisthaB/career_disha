@@ -1,0 +1,177 @@
+{% extends 'layout/layout.html' %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/signup.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/circle.css" />
+	<style>
+		* {box-sizing: border-box}
+
+		.skill_container {
+		  width: 100%;
+		  background-color: #ddd;
+		}
+
+		.skills {
+		  text-align: right;
+		  padding-top: 10px;
+		  padding-bottom: 10px;
+		  color: white;
+		}		
+		</style>
+{% endblock%}
+
+{% block body %}
+<div class=" static-top" style="top:9.2%; left:0; width:100%; height:90vh; background-color:none; z-index:0;">
+	<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark float-right" style="z-index:1000;">
+		<font style="margin-left:85%; color:white;"></font>
+			<a style="margin-left:1%" href="#">
+				{% if 0 not in subj_score.values() %}
+					<button class="btn btn-outline-success" type="button" data-toggle="modal" data-target=".bd-example-modal-lg">
+				{% else %}
+					<button class="btn btn-outline-success" type="button" data-toggle="modal" data-target=".bd-example-modal-lg" disabled>
+				{% endif %}
+						Report
+				</button>
+			</a>
+		
+		<a style="margin-left:1%" href="{{ url_for('logout')}}">
+			<button class="btn btn-outline-danger" type="submit">
+				Logout
+			</button>
+		</a>
+	</nav>
+	
+	<main role="main">
+
+	<section class="jumbotron text-center">
+		<div class="container">
+		  <h1 class="jumbotron-heading">Welcome {{curr_user}}</h1>
+		  <p class="lead text-muted">Find out what you like doing best and get someone to pay you for doing it.</p>
+		</div>
+	</section>
+
+  <div class="album py-5 bg-light">
+    <div class="container">
+      <div class="row">
+        {% for each_sub, score in subj_score.items() %}
+		<div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+			
+			<div style="width:286px; height:180px; color:#AAAAAA; padding-left: 35%;padding-top: 15%;">
+				<div class="c100 p{{score}} {{col_p | random}}">
+				  <span>{{ score }}%</span>
+				  <div class="slice">
+					<div class="bar"></div>
+					<div class="fill"></div>
+				  </div>
+				</div>
+			</div>
+            
+            <div class="card-body">
+				<h4>{{ each_sub }}</h4>
+				{% if each_sub == 'C' %}
+				<p class="card-text">The C language combines all the power of assembly language with all the ease-of-use of assembly language.</p>
+				{% elif each_sub == 'Networking' %}
+				<p class="card-text">Networking is an enrichment program, not an entitlement program.</p>
+				{% elif each_sub == 'DBMS' %}
+				<p class="card-text">Database Management System, a complex set of interrelational data structures allowing data to be lost in many convenient sequences while retaining a complete record of the logical relations between the missing items.</p>
+				{% elif each_sub == 'Management' %}
+				<p class="card-text">Management is efficiency in climbing the ladder of success; leadership determines whether the ladder is leaning against the right wall.</p>
+				{% elif each_sub == 'DS' %}
+				<p class="card-text">Every program depends on algorithms and data structures, but few programs depend on the invention of brand new ones.</p>
+				{% elif each_sub == 'Aptitude' %}
+				<p class="card-text">I cannot transfer my abilities to anyone, but I can think of quicker ways with which to help people develop numerical aptitude.</p>
+				{% endif%}
+				
+				{% if score <= 0 %}
+				<a href="{{ url_for('exam', exam_subject=each_sub) }}" class="btn btn-sm btn-outline-primary">Give Exam</a>
+				{% endif %}
+			</div>
+          </div>
+        </div>
+		{% endfor%}
+	  </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<h5 class="modal-title" id="myLargeModalLabel">Statistics</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body">
+		{% for each_sub , score in clus_d.items() %}
+			<p style="margin-bottom:0; margin-top:10px;">{{each_sub}} ({{score}}%)</p>
+			<div class="skill_container">
+				<div class="skills" style="width: {{score}}%; background-color: {{col_p | random}};"></div>
+			</div>
+		{% endfor%}
+	  </div>
+	  <div class="modal-body">
+	  <p>
+		{% for each_sub, score in clus_d.items() %}
+			{% if each_sub == "Aptitude" %}
+				{% if score < 25 %}				
+					Your logical skill is very low, you need an extreme workout on it
+				{% elif score >= 25 and score < 50 %}
+					Your logical skill is low, you need to workout on it.
+				{% elif score >= 50 and score < 75 %}				
+					Your logical skill is Good, if you workout on some advance level aptitude, that may add some more positive impact on you.
+				{% elif score >= 75 and score < 100 %}				
+					Your logical skill is Excellent, if you workout on some extreme level aptitude, you may become master in Aptitude.
+				{% endif %}
+				
+				{% if (clus_d["Aptitude"] < 50 and clus_d["Technical Skill"] > 50) or (clus_d["Aptitude"] > 50 and clus_d["Technical Skill"] < 50) %}
+					But,
+				{% elif (clus_d["Aptitude"] < 50 and clus_d["Technical Skill"] < 50) or (clus_d["Aptitude"] > 50 and clus_d["Technical Skill"] > 50) %}
+					And,
+				{% endif %}
+			{% endif %}
+			
+			{% if each_sub == "Technical Skill" %}
+				{% if score < 25 %}				
+					Your technical skill is very low, you need an extreme workout on it.
+				{% elif score >= 25 and score < 50 %}
+					Your technical skill is low, you need to workout on it.
+				{% elif score >= 50 and score < 75 %}				
+					Your technical skill is Good, if you workout on some advance level technical skills, that may add some more positive impact on you.
+				{% elif score >= 75 and score < 100 %}				
+					Your technical skill is Excellent, if you workout on some extreme level technical skills, you may become doctor in Aptitude.
+				{% endif %}
+				
+				{% if (clus_d["Technical Skill"] < 50 and clus_d["Managerial Skills"] > 50) or (clus_d["Technical Skill"] > 50 and clus_d["Managerial Skills"] < 50) %}
+					But,
+				{% elif (clus_d["Technical Skill"] < 50 and clus_d["Managerial Skills"] < 50) or (clus_d["Technical Skill"] > 50 and clus_d["Managerial Skills"] > 50) %}
+					And,
+				{% endif %}
+			{% endif %}
+			
+			{% if each_sub == "Managerial Skills" %}
+				{% if score < 25 %}				
+					Your Managerial skill is very low, you need an extreme workout on it.
+				{% elif score >= 25 and score < 50 %}
+					Your Managerial skill is low, you need to workout on it.
+				{% elif score >= 50 and score < 75 %}				
+					Your Managerial skill is Good, if you workout on some advance level management skills, that may add some more positive impact on you.
+				{% elif score >= 75 and score < 100 %}				
+					Your Managerial skill is Excellent, if you workout on some extreme level management skills, you may become doctor in Aptitude.
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+		</p>
+		</div>
+	
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-primary">Re-Assessment</button>
+		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endblock %}
